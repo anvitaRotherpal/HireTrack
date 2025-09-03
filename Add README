@@ -1,0 +1,23 @@
+# Hire Track
+
+**Hire Track** is a web application designed to help job seekers and recruiters connect efficiently. The platform allows recruiters to post job opportunities and job seekers to apply, track their applications, and optimize their job search.
+
+## Features
+- Recruiters can post, update, or remove job listings.
+- Job seekers can browse jobs, filter by location, skills, or role.
+- Application tracking for job seekers.
+- Route planning or suggested paths for offline job applications (if implemented).
+- User-friendly interface for both recruiters and applicants.
+
+## Tech Stack
+- **Backend:** Java, Spring Boot
+- **Frontend:** Thymeleaf (or React if used)
+- **Database:** MySQL
+- **Build Tool:** Maven
+- **Other Tools:** (Optional: e.g., Docker, Kafka)
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/hire-track.git
