@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Maven / Java
+target/
+*.class
+*.jar
+
+# VS Code
+.vscode/
+
+# Firebase secret
+firebase-service-account.json
