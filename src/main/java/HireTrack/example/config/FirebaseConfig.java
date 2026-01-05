@@ -14,11 +14,15 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        // Path to your Firebase service account key
-        FileInputStream serviceAccount = new FileInputStream(
-        getClass().getClassLoader().getResource("firebase-service-account.json").getFile()
-);
-        FirebaseOptions options = new FirebaseOptions.Builder()
+        FileInputStream serviceAccount =
+                new FileInputStream(
+                        getClass()
+                                .getClassLoader()
+                                .getResource("firebase-service-account.json")
+                                .getFile()
+                );
+
+        FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
 
