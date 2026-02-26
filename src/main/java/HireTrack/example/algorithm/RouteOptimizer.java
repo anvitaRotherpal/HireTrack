@@ -1,52 +1,79 @@
 package HireTrack.example.algorithm;
 
+import HireTrack.example.model.Store;
 import java.util.*;
 
+// RouteOptimizer calculates shortest paths between stores
 public class RouteOptimizer {
 
-    // Graph representation
+    // Graph: key = store name, value = list of edges to other stores
     private final Map<String, List<Edge>> graph = new HashMap<>();
 
-    // Edge class
+    // Inner class to represent an edge to another store
     static class Edge {
-        String destination;
+        Store destination;
         int distance;
 
-        Edge(String destination, int distance) {
+        Edge(Store destination) {
             this.destination = destination;
-            this.distance = distance;
+            this.distance = destination.getDistance();
         }
     }
 
-    // Add location connection
-    public void addRoute(String from, String to, int distance) {
-        graph.computeIfAbsent(from, k -> new ArrayList<>())
-             .add(new Edge(to, distance));
-        graph.computeIfAbsent(to, k -> new ArrayList<>())
-             .add(new Edge(from, distance));
+    // Add a route between two stores
+    public void addRoute(Store from, Store to) {
+        graph.computeIfAbsent(from.getName(), k -> new ArrayList<>())
+             .add(new Edge(to));
+
+        graph.computeIfAbsent(to.getName(), k -> new ArrayList<>())
+             .add(new Edge(from));
     }
 
-    // Dijkstra's Algorithm
+    // Dijkstra algorithm to calculate shortest distances from a starting store
     public Map<String, Integer> shortestPath(String start) {
         Map<String, Integer> distances = new HashMap<>();
-        PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingInt(e -> e.distance));
+        PriorityQueue<Map.Entry<String, Integer>> pq = new PriorityQueue<>(Map.Entry.comparingByValue());
 
-        pq.add(new Edge(start, 0));
+        for (String store : graph.keySet()) {
+            distances.put(store, Integer.MAX_VALUE);
+        }
+
         distances.put(start, 0);
+        pq.offer(new AbstractMap.SimpleEntry<>(start, 0));
 
         while (!pq.isEmpty()) {
-            Edge current = pq.poll();
+            Map.Entry<String, Integer> entry = pq.poll();
+            String current = entry.getKey();
+            int currentDist = entry.getValue();
 
-            for (Edge neighbor : graph.getOrDefault(current.destination, new ArrayList<>())) {
-                int newDist = distances.get(current.destination) + neighbor.distance;
-
-                if (newDist < distances.getOrDefault(neighbor.destination, Integer.MAX_VALUE)) {
-                    distances.put(neighbor.destination, newDist);
-                    pq.add(new Edge(neighbor.destination, newDist));
+            for (Edge edge : graph.getOrDefault(current, new ArrayList<>())) {
+                String neighbor = edge.destination.getName();
+                int newDist = currentDist + edge.distance;
+                if (newDist < distances.get(neighbor)) {
+                    distances.put(neighbor, newDist);
+                    pq.offer(new AbstractMap.SimpleEntry<>(neighbor, newDist));
                 }
             }
         }
 
         return distances;
+    }
+
+    // Temporary main method to test the algorithm
+    public static void main(String[] args) {
+        RouteOptimizer optimizer = new RouteOptimizer();
+
+        Store home = new Store("Home", 0);
+        Store storeA = new Store("StoreA", 4);
+        Store storeB = new Store("StoreB", 2);
+        Store storeC = new Store("StoreC", 5);
+
+        optimizer.addRoute(home, storeA);
+        optimizer.addRoute(home, storeB);
+        optimizer.addRoute(storeB, storeA);
+        optimizer.addRoute(storeA, storeC);
+        optimizer.addRoute(storeB, storeC);
+
+        System.out.println(optimizer.shortestPath("Home"));
     }
 }

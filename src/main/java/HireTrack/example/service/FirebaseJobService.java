@@ -1,47 +1,55 @@
 package HireTrack.example.service;
 
+import HireTrack.example.model.Job;
+import HireTrack.example.model.Store;
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
-import HireTrack.example.model.Job;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
 public class FirebaseJobService {
 
-    private final Firestore db = FirestoreClient.getFirestore();
+    public List<Store> getAllStores() throws ExecutionException, InterruptedException {
+        List<Store> stores = new ArrayList<>();
 
-    // Add a new job to Firestore
-    public void addJob(Job job) {
-        try {
-            db.collection("jobs").add(job).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
+        CollectionReference jobsCollection = FirestoreClient.getFirestore().collection("jobs");
+        ApiFuture<QuerySnapshot> future = jobsCollection.get();
 
-    // Get all jobs from Firestore
-    public List<Job> getAllJobs() {
-        List<Job> jobs = new ArrayList<>();
-        ApiFuture<QuerySnapshot> querySnapshot = db.collection("jobs").get();
-
-        try {
-            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-                Job job = document.toObject(Job.class);
-                if (job != null) {
-                    jobs.add(job);
-                }
+        int dummyDistance = 1; // start with 1, increment for each job
+        for (DocumentSnapshot doc : future.get().getDocuments()) {
+            Job job = doc.toObject(Job.class);
+            if (job != null) {
+                  System.out.println("Fetched job: " + job.getTitle());
+                stores.add(new Store(job.getTitle(), dummyDistance));
+                dummyDistance++;
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
         }
 
-        return jobs;
+        return stores;
     }
+
+
+public List<Job> getAllJobs() throws ExecutionException, InterruptedException {
+    List<Job> jobs = new ArrayList<>();
+
+    CollectionReference jobsCollection = FirestoreClient.getFirestore().collection("jobs");
+    ApiFuture<QuerySnapshot> future = jobsCollection.get();
+
+    for (DocumentSnapshot doc : future.get().getDocuments()) {
+        Job job = doc.toObject(Job.class);
+        if (job != null) {
+            job.setId(doc.getId()); // capture Firestore ID
+            jobs.add(job);
+        }
+    }
+
+    return jobs;
+}
 }
