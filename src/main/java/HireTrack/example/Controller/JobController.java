@@ -1,33 +1,29 @@
 package HireTrack.example.Controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import HireTrack.example.service.FirebaseJobService;
 import HireTrack.example.model.Job;
+import HireTrack.example.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/jobs")
 public class JobController {
 
     @Autowired
-    private FirebaseJobService jobService;
+    private JobRepository jobRepository;
 
-    // Get all jobs
+    // GET all jobs
     @GetMapping
-    public List<Job> getAllJobs() {
-        return jobService.getAllJobs();
+    public List<Job> getAllJobs() throws ExecutionException, InterruptedException {
+        return jobRepository.getAllJobs();
     }
 
-    // Add a new job
+    // POST a new job
     @PostMapping
-    public void addJob(@RequestBody Job job) {
-        jobService.addJob(job);
+    public String addJob(@RequestBody Job job) throws ExecutionException, InterruptedException {
+        return jobRepository.addJob(job);
     }
 }
