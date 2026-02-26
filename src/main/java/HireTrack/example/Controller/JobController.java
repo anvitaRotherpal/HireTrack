@@ -16,6 +16,12 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/api/jobs")
 public class JobController {
 
+     private final FirebaseJobService jobService;
+
+    public JobController(FirebaseJobService jobService) {
+        this.jobService = jobService;
+    }
+
     @Autowired
     private JobRepository jobRepository;
 
