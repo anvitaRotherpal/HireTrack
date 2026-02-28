@@ -31,16 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-# Maven / Java
-target/
-*.class
-*.jar
-
-# VS Code
-.vscode/
-
-# Firebase secret
-firebase-service-account.json
-
-src/main/hiretrack-3e389-firebase-adminsdk-co5ha-d4cfc42d7f.json
